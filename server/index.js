@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
 const authRoutes = require('./routes/authRoutes');
+const taskRoutes = require('./routes/taskRoutes');
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/user', authRoutes);
+app.use('/task', taskRoutes);
 
 const PORT = process.env.PORT || 4000;
 
