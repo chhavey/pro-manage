@@ -11,9 +11,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/health', (req, res) => {
-    res.send('Server is up and running successfully.');
+    // res.send('Server is up and running successfully.');
+    res.json({
+        service: "Pro manage server",
+        status: "Active",
+        time: new Date(),
+    });
 });
 
-app.listen(process.env.PORT, () => {
-    console.log('Server running on port', process.env.PORT);
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+    mongoose.connect(process.env.MONGODB_URL)
+        .then(() => console.log(`Server running on port ${PORT}`))
+        .catch((error) => console.log(error.message));
 })
