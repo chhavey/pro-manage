@@ -49,4 +49,35 @@ const register = async (name, email, password) => {
     }
 }
 
-export { login, register };
+const settings = async (name, oldPassword, newPassword) => {
+    try {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+        const reqUrl = `${backendUrl}/user/settings`;
+        const reqPayload = {
+            name,
+            oldPassword,
+            newPassword
+        }
+
+        const response = await axios.put(reqUrl, reqPayload, {
+            headers: {
+                'Authorization': token,
+            }, data: {
+                userId: userId
+            }
+        });
+
+        return response.data.message;
+    }
+    catch (error) {
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else {
+            throw new Error('Update failed!');
+        }
+    }
+
+}
+
+export { login, register, settings };
