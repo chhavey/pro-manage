@@ -14,6 +14,7 @@ const login = async (email, password) => {
         if (response.status === 200) {
             localStorage.setItem("token", response.data.data.token);
             localStorage.setItem("loggedInUser", response.data.data.loggedUser);
+            localStorage.setItem("userId", response.data.data.userId);
         }
 
         return response.data.message;
