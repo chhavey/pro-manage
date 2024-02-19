@@ -1,13 +1,13 @@
 const router = require('express').Router();
 const requireAuth = require('../middlewares/requireAuth');
-const { fetchAllTasks, createTask, fetchTask, updateTask, deleteTask } = require('../controllers/taskController');
+const { createTask, fetchTask, updateTask, deleteTask, filterTasks, fetchAnalytics, updateSubtaskStatus } = require('../controllers/taskController');
 
-router.get('/all', requireAuth, fetchAllTasks);
+router.get('/filter', requireAuth, filterTasks);
+router.get('/analytics', requireAuth, fetchAnalytics);
 router.post('/create', requireAuth, createTask);
 router.get('/:taskId', fetchTask); //sharable
 router.put('/:taskId', requireAuth, updateTask);
 router.delete('/:taskId', requireAuth, deleteTask);
-// router.get('/analytics');
-// router.put('/:taskId/:subtaskIndex');
+router.post('/subtask', requireAuth, updateSubtaskStatus);
 
 module.exports = router;

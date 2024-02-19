@@ -1,21 +1,7 @@
 const Task = require('../models/taskModel');
 const handleResponse = require('../utils/handleResponse');
 const errorHandler = require('../middlewares/errorHandler');
-
-//Fetch all tasks
-const fetchAllTasks = async (req, res) => {
-    try {
-        const userId = req.body.userId;
-        const allTasks = await Task.find({ user: userId });
-
-        handleResponse(res, 200, 'All tasks fetched successfully', {
-            Tasks: allTasks
-        });
-    }
-    catch (error) {
-        errorHandler(res, error);
-    }
-}
+const moment = require('moment');
 
 //Create new task
 const createTask = async (req, res) => {
@@ -51,7 +37,10 @@ const fetchTask = async (req, res) => {
             return;
         }
 
-        handleResponse(res, 200, 'Task fetched successfully', task);
+        const totalSubtasks = task.checklist.length;
+        const completedSubtasks = task.checklist.filter(subtask => subtask.isDone).length;
+
+        handleResponse(res, 200, 'Task fetched successfully', { task, totalSubtasks, completedSubtasks });
 
     } catch (error) {
         errorHandler(res, error);
@@ -61,7 +50,7 @@ const fetchTask = async (req, res) => {
 //Update task
 const updateTask = async (req, res) => {
     try {
-        const { title, priority, checklist, deadline } = req.body;
+        const { title, priority, checklist, deadline, status } = req.body;
         const taskId = req.params.taskId;
         const userId = req.body.userId;
 
@@ -78,6 +67,7 @@ const updateTask = async (req, res) => {
         existingTask.priority = priority || existingTask.priority;
         existingTask.checklist = checklist || existingTask.checklist;
         existingTask.deadline = deadline || existingTask.deadline;
+        existingTask.status = status || existingTask.status;
 
         // Save the updated task
         existingTask = await existingTask.save();
@@ -101,5 +91,115 @@ const deleteTask = async (req, res) => {
     }
 }
 
+//Filter Task
+const filterTasks = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const filterType = req.query.filterType;
+        let startDate, endDate;
 
-module.exports = { fetchAllTasks, createTask, fetchTask, updateTask, deleteTask }
+        // Default to filtering tasks for the current week
+        startDate = moment().startOf('week');
+        endDate = moment().endOf('week');
+
+        switch (filterType) {
+            case 'Today':
+                startDate = moment().startOf('day');
+                endDate = moment().endOf('day');
+                break;
+            case 'This Week':
+                //Default case, already set above
+                break;
+            case 'This Month':
+                startDate = moment().startOf('month');
+                endDate = moment().endOf('month');
+                break;
+            default:
+                return handleResponse(res, 400, 'Invalid filter type');
+        }
+
+        const filteredTasks = await Task.find({
+            user: userId,
+            createdAt: { $gte: startDate, $lte: endDate }
+        });
+
+        // Calculating total and completed subtasks for each task
+        const tasksWithSubtaskInfo = filteredTasks.map(task => {
+            const totalSubtasks = task.checklist.length;
+            const completedSubtasks = task.checklist.filter(subtask => subtask.isDone).length;
+            return {
+                ...task.toObject(),
+                totalSubtasks,
+                completedSubtasks
+            };
+        });
+
+        handleResponse(res, 200, 'Tasks filtered successfully', { Tasks: tasksWithSubtaskInfo });
+    } catch (error) {
+        errorHandler(res, error);
+    }
+}
+
+//Fetch analytics of all tasks
+const fetchAnalytics = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+
+        // Fetching tasks based on different categories
+        const backlogTasks = await Task.countDocuments({ user: userId, status: 'Backlog' });
+        const todoTasks = await Task.countDocuments({ user: userId, status: 'To Do' });
+        const inProgressTasks = await Task.countDocuments({ user: userId, status: 'In progress' });
+        const doneTasks = await Task.countDocuments({ user: userId, status: 'Done' });
+
+        const lowPriorityTasks = await Task.countDocuments({ user: userId, priority: 'LOW' });
+        const moderatePriorityTasks = await Task.countDocuments({ user: userId, priority: 'MODERATE' });
+        const highPriorityTasks = await Task.countDocuments({ user: userId, priority: 'HIGH' });
+
+        // Fetch tasks with due dates
+        const dueDateTasks = await Task.countDocuments({ user: userId, status: { $ne: 'Done' }, deadline: { $exists: true } });
+
+        // Construct response object
+        const tasksByCategory = {
+            backlogTasks,
+            todoTasks,
+            inProgressTasks,
+            doneTasks,
+            lowPriorityTasks,
+            moderatePriorityTasks,
+            highPriorityTasks,
+            dueDateTasks
+        };
+
+        handleResponse(res, 200, 'Tasks fetched successfully', tasksByCategory);
+    } catch (error) {
+        errorHandler(res, error);
+    }
+}
+
+const updateSubtaskStatus = async (req, res) => {
+    try {
+        const { taskId, subtaskIndex, isDone } = req.body;
+
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return handleResponse(res, 404, 'Task not found.');
+        }
+
+        if (subtaskIndex < 0 || subtaskIndex >= task.checklist.length) {
+            return handleResponse(res, 400, 'Invalid subtask index.');
+        }
+
+        task.checklist[subtaskIndex].isDone = isDone;
+
+        await task.save();
+
+        handleResponse(res, 200, 'Subtask status updated successfully', { updatedTask: task });
+    } catch (error) {
+        errorHandler(res, error);
+    }
+};
+
+
+
+module.exports = { createTask, fetchTask, updateTask, deleteTask, filterTasks, fetchAnalytics, updateSubtaskStatus }
