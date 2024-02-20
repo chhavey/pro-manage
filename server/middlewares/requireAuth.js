@@ -7,7 +7,7 @@ const requireAuth = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({
                 status: 'FAILED',
-                message: 'Unauthorized'
+                message: 'Please login to continue.'
             })
         }
 
