@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { backendUrl } from '../config/config';
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
 

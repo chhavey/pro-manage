@@ -7,6 +7,7 @@ import { ReactComponent as Password } from "../../assets/password.svg";
 import { register } from "../../apis/auth";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import Spinner from "@atlaskit/spinner";
 
 function Register() {
   const [showPassword, setShowPassword] = useState(false);
@@ -153,7 +154,7 @@ function Register() {
           Register
         </button>
         <p className={styles.content}>
-          {loading ? "Just a moment.." : "Have an account?"}
+          {loading ? <Spinner /> : "Have an account?"}
         </p>
         <button className={styles.loginBtn} onClick={handleLogin}>
           Log in

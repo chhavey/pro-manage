@@ -1,0 +1,40 @@
+.container {
+  width: 19rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #eef2f5;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.titleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  color: black;
+  font-weight: 500;
+  font-size: 0.975rem;
+}
+
+.buttons {
+  height: 0.875rem;
+}
+
+.buttons:hover {
+  cursor: pointer;
+}
+/* Vertical scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 10px;
+  background-color: #d6eaf4;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #8daab9cc;
+  border-radius: 10px;
+}

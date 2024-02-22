@@ -23,8 +23,8 @@ function Sidebar() {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
     navigate("/");
+    localStorage.clear();
   };
 
   return (

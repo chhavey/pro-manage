@@ -5,17 +5,22 @@ import { ReactComponent as Bullet } from "../../assets/bullet.svg";
 import { fetchAnalytics } from "../../apis/task";
 import { toast, Toaster } from "react-hot-toast";
 import { formatNum } from "../../utils/formatUtils";
+import Spinner from "@atlaskit/spinner";
 
 function Analytics() {
   const [stats, setStats] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const getAnalytics = async () => {
+    setLoading(true);
     try {
       const response = await fetchAnalytics();
       setStats(response);
     } catch (error) {
       const errorMessage = error.message || "An error occurred";
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -40,29 +45,45 @@ function Analytics() {
     <div style={{ display: "flex" }}>
       <Sidebar />
       <Toaster />
-      <div className={styles.container}>
-        <p className={styles.heading}>Analytics</p>
-        <div className={styles.wrapper}>
-          <div className={styles.analytics}>
-            {status.map((data, index) => (
-              <div key={index} className={styles.element}>
-                <Bullet style={{ height: "10px" }} />
-                <p className={styles.title}>{data.title}</p>
-                <p className={styles.stats}>{formatNum(data.stats)}</p>
+
+      {!loading ? (
+        <>
+          <div className={styles.container}>
+            <p className={styles.heading}>Analytics</p>
+            <div className={styles.wrapper}>
+              <div className={styles.analytics}>
+                {status.map((data, index) => (
+                  <div key={index} className={styles.element}>
+                    <Bullet style={{ height: "10px" }} />
+                    <p className={styles.title}>{data.title}</p>
+                    <p className={styles.stats}>{formatNum(data.stats)}</p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className={styles.analytics}>
-            {priority.map((data, index) => (
-              <div key={index} className={styles.element}>
-                <Bullet style={{ height: "10px" }} />
-                <p className={styles.title}>{data.title}</p>
-                <p className={styles.stats}>{formatNum(data.stats)}</p>
+              <div className={styles.analytics}>
+                {priority.map((data, index) => (
+                  <div key={index} className={styles.element}>
+                    <Bullet style={{ height: "10px" }} />
+                    <p className={styles.title}>{data.title}</p>
+                    <p className={styles.stats}>{formatNum(data.stats)}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
+        </>
+      ) : (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "84vw",
+          }}
+        >
+          <Spinner size="large" />
         </div>
-      </div>
+      )}
     </div>
   );
 }

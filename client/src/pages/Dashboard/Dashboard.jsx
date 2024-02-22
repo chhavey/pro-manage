@@ -1,13 +1,14 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import Board from "../../components/Board/Board";
 
-function Board() {
+function Dashboard() {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      Board
+      <Board />
     </div>
   );
 }
 
-export default Board;
+export default Dashboard;

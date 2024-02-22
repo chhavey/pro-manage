@@ -3,7 +3,7 @@ import LoginPage from './pages/LoginPage/LoginPage';
 import RegisterPage from './pages/RegisterPage/RegisterPage';
 import Analytics from "./pages/Analytics/Analytics";
 import Settings from "./pages/Settings/Settings";
-import Board from "./pages/Board/Board";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 function App() {
   return (
@@ -12,11 +12,10 @@ function App() {
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/board" element={<Board />} />
+        <Route path="/board" element={<Dashboard />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
-
   );
 }
 
