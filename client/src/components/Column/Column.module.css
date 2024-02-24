@@ -1,5 +1,5 @@
 .container {
-  width: 19rem;
+  width: 20rem;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: #eef2f5;
@@ -27,6 +27,16 @@
 .buttons:hover {
   cursor: pointer;
 }
+
+.cardsWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: flex-start;
+  gap: 1rem;
+  margin: 1.5rem 0 1rem 0;
+}
+
 /* Vertical scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

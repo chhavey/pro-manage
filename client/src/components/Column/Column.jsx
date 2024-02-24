@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./Column.module.css";
 import { ReactComponent as Minimize } from "../../assets/minimize.svg";
 import { ReactComponent as AddButton } from "../../assets/add.svg";
+import Card from "../Card/Card";
 
 function Column({ status }) {
   return (
@@ -12,6 +13,11 @@ function Column({ status }) {
           {status === "To do" && <AddButton className={styles.buttons} />}
           <Minimize className={styles.buttons} />
         </div>
+      </div>
+      <div className={styles.cardsWrapper}>
+        <Card priority="LOW" />
+        <Card priority="MODERATE" />
+        <Card priority="HIGH" />
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const backendUrl = process.env.REACT_APP_BACKEND_URL;
+import { backendUrl } from '../config/config';
 
 const login = async (email, password) => {
     try {

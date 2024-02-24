@@ -3,7 +3,7 @@ import styles from "./Analytics.module.css";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { ReactComponent as Bullet } from "../../assets/bullet.svg";
 import { fetchAnalytics } from "../../apis/task";
-import { toast, Toaster } from "react-hot-toast";
+// import { toast, Toaster } from "react-hot-toast";
 import { formatNum } from "../../utils/formatUtils";
 import Spinner from "@atlaskit/spinner";
 
@@ -17,8 +17,8 @@ function Analytics() {
       const response = await fetchAnalytics();
       setStats(response);
     } catch (error) {
-      const errorMessage = error.message || "An error occurred";
-      toast.error(errorMessage);
+      // const errorMessage = error.message || "An error occurred";
+      // toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ function Analytics() {
   return (
     <div style={{ display: "flex" }}>
       <Sidebar />
-      <Toaster />
+      {/* <Toaster /> */}
 
       {!loading ? (
         <>
