@@ -6,6 +6,7 @@ import { ReactComponent as Name } from "../../assets/name.svg";
 import { ReactComponent as Password } from "../../assets/password.svg";
 import { settings } from "../../apis/auth";
 import { toast, Toaster } from "react-hot-toast";
+import Spinner from "@atlaskit/spinner";
 
 function Settings() {
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -13,6 +14,7 @@ function Settings() {
   const [name, setName] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const viewOldPassword = () => {
     setShowOldPassword((prevState) => !prevState);
@@ -22,6 +24,7 @@ function Settings() {
   };
 
   const handleUpdate = async () => {
+    setLoading(true);
     try {
       const response = await settings(name, oldPassword, newPassword);
       if (response) {
@@ -32,6 +35,8 @@ function Settings() {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,7 +81,7 @@ function Settings() {
           </div>
 
           <button className={styles.updateBtn} onClick={handleUpdate}>
-            Update
+            {loading ? <Spinner /> : "Update"}
           </button>
         </div>
       </div>

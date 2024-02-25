@@ -13,4 +13,13 @@ function getOrdinalSuffix(day) {
 
 const formattedDate = `${day}${getOrdinalSuffix(day)} ${month}, ${year}`;
 
-export { formattedDate }
+
+function formatDeadlineDate(date) {
+    const deadlineDate = new Date(date);
+    const deadlineMonth = deadlineDate.toLocaleDateString('en-US', { month: 'short' });
+    const deadlineDay = deadlineDate.getDate();
+    const suffix = getOrdinalSuffix(deadlineDay);
+    return `${deadlineMonth}, ${deadlineDay}${suffix}`;
+}
+
+export { formattedDate, formatDeadlineDate }

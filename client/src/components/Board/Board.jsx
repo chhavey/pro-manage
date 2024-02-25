@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Board.module.css";
 import { formattedDate } from "../../utils/formatDate";
 import Column from "../Column/Column";
 import { GoChevronDown } from "react-icons/go";
+import { filterTasks } from "../../apis/task";
 
 function Board() {
   const options = [
@@ -11,13 +12,42 @@ function Board() {
     { label: "This Month", value: "This Month" },
   ];
   const name = localStorage.getItem("loggedInUser").split(" ");
-  const [selectedOption, setSelectedOption] = useState(options[1]);
+  const [filterType, setFilterType] = useState(options[1]);
   const [isOpen, setIsOpen] = useState(false);
+  const [tasks, setTasks] = useState({
+    Backlog: [],
+    "To Do": [],
+    "In Progress": [],
+    Done: [],
+  });
 
   const handleOptionClick = (option) => {
-    setSelectedOption(option);
+    setFilterType(option);
     setIsOpen(false);
   };
+
+  const filterTask = async () => {
+    try {
+      const response = await filterTasks(filterType.label);
+      const organizedTasks = {
+        Backlog: [],
+        "To Do": [],
+        "In Progress": [],
+        Done: [],
+      };
+      response.data.Tasks.forEach((task) => {
+        organizedTasks[task.status].push(task);
+      });
+      setTasks(organizedTasks);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    filterTask();
+    // eslint-disable-next-line
+  }, [filterType]);
   return (
     <div className={styles.container}>
       <div className={styles.topWrapper}>
@@ -26,13 +56,12 @@ function Board() {
       </div>
       <div className={styles.topWrapper}>
         <p className={styles.titleText}>Board</p>
-        {/* select */}
         <div className={styles.selectWrapper}>
           <div
             className={styles.selectHeader}
             onClick={() => setIsOpen(!isOpen)}
           >
-            {selectedOption.label}
+            {filterType.label}
             <GoChevronDown />
           </div>
           {isOpen && (
@@ -41,7 +70,7 @@ function Board() {
                 <div
                   key={option.value}
                   className={`${styles.option} ${
-                    selectedOption === option ? styles.selected : ""
+                    filterType === option ? styles.selected : ""
                   }`}
                   onClick={() => handleOptionClick(option)}
                 >
@@ -55,10 +84,10 @@ function Board() {
 
       <div className={styles.boardWrapper}>
         <div className={styles.board}>
-          <Column status="Backlog" />
-          <Column status="To do" />
-          <Column status="In progress" />
-          <Column status="Done" />
+          <Column status="Backlog" tasks={tasks.Backlog} />
+          <Column status="To do" tasks={tasks["To Do"]} />
+          <Column status="In progress" tasks={tasks["In Progress"]} />
+          <Column status="Done" tasks={tasks.Done} />
         </div>
       </div>
     </div>

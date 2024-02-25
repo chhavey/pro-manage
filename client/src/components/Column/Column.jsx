@@ -4,7 +4,7 @@ import { ReactComponent as Minimize } from "../../assets/minimize.svg";
 import { ReactComponent as AddButton } from "../../assets/add.svg";
 import Card from "../Card/Card";
 
-function Column({ status }) {
+function Column({ status, tasks }) {
   return (
     <div className={styles.container}>
       <div className={styles.titleWrapper}>
@@ -15,9 +15,9 @@ function Column({ status }) {
         </div>
       </div>
       <div className={styles.cardsWrapper}>
-        <Card priority="LOW" />
-        <Card priority="MODERATE" />
-        <Card priority="HIGH" />
+        {tasks.map((task) => (
+          <Card key={task._id} task={task} />
+        ))}
       </div>
     </div>
   );

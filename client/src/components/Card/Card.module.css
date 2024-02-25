@@ -7,7 +7,6 @@
 .topSection,
 .priorityWrapper,
 .checklistHeader,
-.bottomSection,
 .statusWrapper {
   display: flex;
   justify-content: space-between;
@@ -129,14 +128,37 @@
 
 .bottomSection {
   margin: 1.25rem 0 0 0;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
-.dateBtn {
+.date {
+  background-color: #dbdbdb;
+  font-size: 0.57rem;
+  color: #5a5a5a;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-weight: 500;
+}
+
+.deadline {
   background-color: var(--color-red);
   font-size: 0.57rem;
   color: white;
   border-radius: 0.5rem;
   padding: 0.25rem 0.5rem;
+}
+
+.done {
+  background-color: var(--priority-low);
+  font-size: 0.57rem;
+  color: white;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+}
+.placeholder {
+  flex: 1;
 }
 
 .statusBtn {
@@ -147,6 +169,7 @@
   padding: 0.25rem 0.5rem;
   font-weight: 500;
   background-color: #eeecec;
+  white-space: nowrap;
 }
 
 .menucontainer {
