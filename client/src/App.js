@@ -4,6 +4,7 @@ import RegisterPage from './pages/RegisterPage/RegisterPage';
 import Analytics from "./pages/Analytics/Analytics";
 import Settings from "./pages/Settings/Settings";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import SharedTask from "./pages/SharedTask/SharedTask";
 
 function App() {
   return (
@@ -11,8 +12,9 @@ function App() {
       <Routes>
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/register" element={<RegisterPage />} />
         <Route path="/board" element={<Dashboard />} />
+        <Route path="/task/:taskId" element={<SharedTask />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>

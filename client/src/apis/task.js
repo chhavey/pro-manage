@@ -49,6 +49,18 @@ const deleteTask = async (taskId) => {
     }
 }
 
+const fetchTask = async (taskId) => {
+    try {
+        const reqUrl = `${backendUrl}/task/${taskId}`;
+        const response = axios.get(reqUrl, {
+            params: { taskId }
+        });
+        return response;
+    } catch (error) {
+        console.log('Couldnt fetch task');
+    }
+}
+
 const fetchAnalytics = async () => {
     try {
         const reqUrl = `${backendUrl}/task/analytics`;
@@ -75,4 +87,4 @@ const fetchAnalytics = async () => {
     }
 }
 
-export { filterTasks, deleteTask, fetchAnalytics };
+export { filterTasks, deleteTask, fetchTask, fetchAnalytics };
