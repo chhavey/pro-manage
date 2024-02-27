@@ -1,19 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./Card.module.css";
 import { ReactComponent as Menu } from "../../assets/menu.svg";
+import { ReactComponent as Check } from "../../assets/check.svg";
 import { priorityColor } from "../../utils/formatUtils";
 import { GoChevronDown, GoChevronUp } from "react-icons/go";
 import { formatDeadlineDate } from "../../utils/formatDate";
-import { deleteTask } from "../../apis/task";
+import { updateSubtaskStatus } from "../../apis/task";
 import { frontendUrl } from "../../config/config";
 import copy from "clipboard-copy";
 import { toast, Toaster } from "react-hot-toast";
 import DeleteModal from "../Modal/DeleteModal/DeleteModal";
 
-function Card({ task }) {
+function Card({ task, status, moveCard, deleteCard }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [completedSubtasks, setCompletedSubtasks] = useState(
+    task.completedSubtasks
+  );
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -22,13 +27,31 @@ function Card({ task }) {
     setIsChecklistOpen(!isChecklistOpen);
   };
 
-  const removeTask = async (taskId) => {
+  useEffect(() => {
+    setSelectedCheckboxes(task.checklist.map((subtask) => subtask.isDone));
+  }, [task]);
+
+  useEffect(() => {
+    const completedCount = selectedCheckboxes.filter(
+      (isChecked) => isChecked
+    ).length;
+    setCompletedSubtasks(completedCount);
+  }, [selectedCheckboxes]);
+
+  const toggleCheckBox = async (index) => {
+    const updatedSelectedCheckboxes = [...selectedCheckboxes];
+    updatedSelectedCheckboxes[index] = !updatedSelectedCheckboxes[index];
+    setSelectedCheckboxes(updatedSelectedCheckboxes);
+
     try {
-      const response = await deleteTask(taskId);
-      console.log(response);
-      toast.success(response.message);
+      await updateSubtaskStatus(
+        task._id,
+        index,
+        updatedSelectedCheckboxes[index]
+      );
+      console.log("Subtask status updated successfully");
     } catch (error) {
-      toast.error(error.message || "Failed to delete task");
+      console.error("Error updating subtask status:", error.message);
     }
   };
 
@@ -102,7 +125,7 @@ function Card({ task }) {
 
       <div className={styles.checklistHeader}>
         <p className={styles.checklistLabel}>
-          Checklist ({task.completedSubtasks}/{task.totalSubtasks})
+          Checklist ({completedSubtasks}/{task.totalSubtasks})
         </p>
         <div className={styles.arrowBtn}>
           {isChecklistOpen ? (
@@ -116,11 +139,19 @@ function Card({ task }) {
       {isChecklistOpen && (
         <div className={styles.checklistWrapper}>
           {task.checklist.map((subtask, index) => (
-            <label key={index} className={styles.checkWrapper}>
-              <input type="checkbox" />
-              <span className={styles.checkmark}></span>
+            <div key={index} className={styles.checkWrapper}>
+              <div
+                className={
+                  selectedCheckboxes[index]
+                    ? styles.checkboxSelected
+                    : styles.checkbox
+                }
+                onClick={() => toggleCheckBox(index)}
+              >
+                {selectedCheckboxes[index] && <Check />}
+              </div>
               {subtask.subtask}
-            </label>
+            </div>
           ))}
         </div>
       )}
@@ -134,9 +165,38 @@ function Card({ task }) {
           <div className={styles.placeholder}></div>
         )}
         <div className={styles.statusWrapper}>
-          <div className={styles.statusBtn}>IN PROGRESS</div>
-          <div className={styles.statusBtn}>TO DO</div>
-          <div className={styles.statusBtn}>DONE</div>
+          {status !== "Backlog" && (
+            <div
+              className={styles.statusBtn}
+              onClick={() => moveCard(task._id, "Backlog")}
+            >
+              BACKLOG
+            </div>
+          )}
+          {status !== "To Do" && (
+            <div
+              className={styles.statusBtn}
+              onClick={() => moveCard(task._id, "To Do")}
+            >
+              TO DO
+            </div>
+          )}
+          {status !== "In Progress" && (
+            <div
+              className={styles.statusBtn}
+              onClick={() => moveCard(task._id, "In Progress")}
+            >
+              IN PROGRESS
+            </div>
+          )}
+          {status !== "Done" && (
+            <div
+              className={styles.statusBtn}
+              onClick={() => moveCard(task._id, "Done")}
+            >
+              DONE
+            </div>
+          )}
         </div>
       </div>
 
@@ -145,7 +205,7 @@ function Card({ task }) {
           isOpen={deleteModal}
           onClose={() => setDeleteModal(false)}
           onConfirm={() => {
-            removeTask(task._id);
+            deleteCard(task._id);
             setDeleteModal(false);
           }}
         />

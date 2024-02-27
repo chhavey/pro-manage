@@ -87,4 +87,39 @@ const fetchAnalytics = async () => {
     }
 }
 
-export { filterTasks, deleteTask, fetchTask, fetchAnalytics };
+const updateSubtaskStatus = async (taskId, subtaskIndex, isDone) => {
+    try {
+        const reqUrl = `${backendUrl}/task/subtask`;
+        const response = await axios.post(reqUrl, {
+            taskId,
+            subtaskIndex,
+            isDone
+        }, {
+            headers: {
+                Authorization: token,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to update subtask status');
+    }
+};
+
+const updateStatus = async (taskId, status) => {
+    try {
+        const reqUrl = `${backendUrl}/task/taskStatus`;
+        const response = await axios.post(reqUrl, {
+            taskId,
+            status
+        }, {
+            headers: {
+                Authorization: token,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw new Error('Failed to update task status');
+    }
+};
+
+export { filterTasks, deleteTask, fetchTask, fetchAnalytics, updateSubtaskStatus, updateStatus };

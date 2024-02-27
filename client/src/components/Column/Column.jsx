@@ -5,7 +5,7 @@ import { ReactComponent as AddButton } from "../../assets/add.svg";
 import Card from "../Card/Card";
 import CreateModal from "../Modal/CreateModal/CreateModal";
 
-function Column({ status, tasks }) {
+function Column({ status, tasks, moveCard, deleteCard }) {
   const [addTaskModal, setAddTaskModal] = useState(false);
 
   const handleAddTask = () => {
@@ -17,7 +17,7 @@ function Column({ status, tasks }) {
       <div className={styles.titleWrapper}>
         <p className={styles.title}>{status}</p>
         <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
-          {status === "To do" && (
+          {status === "To Do" && (
             <AddButton className={styles.buttons} onClick={handleAddTask} />
           )}
           <Minimize className={styles.buttons} />
@@ -25,7 +25,13 @@ function Column({ status, tasks }) {
       </div>
       <div className={styles.cardsWrapper}>
         {tasks.map((task) => (
-          <Card key={task._id} task={task} />
+          <Card
+            key={task._id}
+            task={task}
+            status={status}
+            moveCard={moveCard}
+            deleteCard={deleteCard}
+          />
         ))}
       </div>
       {addTaskModal && (

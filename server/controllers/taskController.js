@@ -148,7 +148,7 @@ const fetchAnalytics = async (req, res) => {
         // Fetching tasks based on different categories
         const backlogTasks = await Task.countDocuments({ user: userId, status: 'Backlog' });
         const todoTasks = await Task.countDocuments({ user: userId, status: 'To Do' });
-        const inProgressTasks = await Task.countDocuments({ user: userId, status: 'In progress' });
+        const inProgressTasks = await Task.countDocuments({ user: userId, status: 'In Progress' });
         const doneTasks = await Task.countDocuments({ user: userId, status: 'Done' });
 
         const lowPriorityTasks = await Task.countDocuments({ user: userId, priority: 'LOW' });
@@ -171,6 +171,23 @@ const fetchAnalytics = async (req, res) => {
         };
 
         handleResponse(res, 200, 'Tasks fetched successfully', tasksByCategory);
+    } catch (error) {
+        errorHandler(res, error);
+    }
+}
+
+const updateStatus = async (req, res) => {
+    try {
+        const { taskId, status } = req.body;
+        const task = await Task.findById(taskId);
+
+        if (!task) {
+            return handleResponse(res, 404, 'Task not found.');
+        }
+        task.status = status;
+        await task.save();
+
+        handleResponse(res, 200, 'Task status updated successfully', { updatedStatus: status });
     } catch (error) {
         errorHandler(res, error);
     }
@@ -202,4 +219,4 @@ const updateSubtaskStatus = async (req, res) => {
 
 
 
-module.exports = { createTask, fetchTask, updateTask, deleteTask, filterTasks, fetchAnalytics, updateSubtaskStatus }
+module.exports = { createTask, fetchTask, updateTask, deleteTask, filterTasks, fetchAnalytics, updateSubtaskStatus, updateStatus }

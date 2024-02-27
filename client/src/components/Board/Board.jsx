@@ -3,7 +3,7 @@ import styles from "./Board.module.css";
 import { formattedDate } from "../../utils/formatDate";
 import Column from "../Column/Column";
 import { GoChevronDown } from "react-icons/go";
-import { filterTasks } from "../../apis/task";
+import { filterTasks, updateStatus, deleteTask } from "../../apis/task";
 import { toast, Toaster } from "react-hot-toast";
 
 function Board() {
@@ -21,6 +21,11 @@ function Board() {
     "In Progress": [],
     Done: [],
   });
+
+  //to reload the board as soon as card status or task Id changes in card component
+  const [status, setStatus] = useState(null);
+  const [taskId, setTaskId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const handleOptionClick = (option) => {
     setFilterType(option);
@@ -48,7 +53,30 @@ function Board() {
   useEffect(() => {
     filterTask();
     // eslint-disable-next-line
-  }, [filterType]);
+  }, [filterType, status, taskId, deleteId]);
+
+  const moveCard = async (taskId, newStatus) => {
+    try {
+      await updateStatus(taskId, newStatus);
+      setStatus(newStatus);
+      setTaskId(taskId);
+      console.log("Task status updated successfully");
+    } catch (error) {
+      console.error("Error updating Task status:", error.message);
+    }
+  };
+
+  const deleteCard = async (taskId) => {
+    try {
+      const response = await deleteTask(taskId);
+      console.log(response);
+      setDeleteId(taskId);
+      toast.success(response.message);
+    } catch (error) {
+      toast.error(error.message || "Failed to delete task");
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Toaster />
@@ -86,10 +114,30 @@ function Board() {
 
       <div className={styles.boardWrapper}>
         <div className={styles.board}>
-          <Column status="Backlog" tasks={tasks.Backlog} />
-          <Column status="To do" tasks={tasks["To Do"]} />
-          <Column status="In progress" tasks={tasks["In Progress"]} />
-          <Column status="Done" tasks={tasks.Done} />
+          <Column
+            status="Backlog"
+            tasks={tasks.Backlog}
+            moveCard={moveCard}
+            deleteCard={deleteCard}
+          />
+          <Column
+            status="To Do"
+            tasks={tasks["To Do"]}
+            moveCard={moveCard}
+            deleteCard={deleteCard}
+          />
+          <Column
+            status="In Progress"
+            tasks={tasks["In Progress"]}
+            moveCard={moveCard}
+            deleteCard={deleteCard}
+          />
+          <Column
+            status="Done"
+            tasks={tasks.Done}
+            moveCard={moveCard}
+            deleteCard={deleteCard}
+          />
         </div>
       </div>
     </div>

@@ -89,7 +89,7 @@
 
 .checkbox {
   height: 18px;
-  width: 20px;
+  min-width: 18px;
   border-radius: 6px;
   border: 2px solid #e2e2e2;
   cursor: not-allowed;
@@ -98,7 +98,7 @@
 .checkboxSelected {
   background-color: var(--color-primary);
   height: 18px;
-  width: 20px;
+  min-width: 18px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
