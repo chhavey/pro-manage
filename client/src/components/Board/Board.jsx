@@ -4,6 +4,7 @@ import { formattedDate } from "../../utils/formatDate";
 import Column from "../Column/Column";
 import { GoChevronDown } from "react-icons/go";
 import { filterTasks } from "../../apis/task";
+import { toast, Toaster } from "react-hot-toast";
 
 function Board() {
   const options = [
@@ -40,7 +41,7 @@ function Board() {
       });
       setTasks(organizedTasks);
     } catch (error) {
-      console.log(error);
+      toast.error(error.message || "Cannot fetch tasks");
     }
   };
 
@@ -50,6 +51,7 @@ function Board() {
   }, [filterType]);
   return (
     <div className={styles.container}>
+      <Toaster />
       <div className={styles.topWrapper}>
         <p className={styles.welcomeText}>Welcome! {name[0]}</p>
         <p className={styles.dateText}>{formattedDate}</p>

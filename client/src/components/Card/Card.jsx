@@ -7,9 +7,12 @@ import { formatDeadlineDate } from "../../utils/formatDate";
 import { deleteTask } from "../../apis/task";
 import { frontendUrl } from "../../config/config";
 import copy from "clipboard-copy";
+import { toast, Toaster } from "react-hot-toast";
+import DeleteModal from "../Modal/DeleteModal/DeleteModal";
 
 function Card({ task }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -19,31 +22,38 @@ function Card({ task }) {
     setIsChecklistOpen(!isChecklistOpen);
   };
 
-  const handleDelete = (taskId) => {
-    removeTask(taskId);
-
-    setIsMenuOpen(false);
-  };
-
   const removeTask = async (taskId) => {
     try {
       const response = await deleteTask(taskId);
       console.log(response);
+      toast.success(response.message);
     } catch (error) {
-      console.log(error);
+      toast.error(error.message || "Failed to delete task");
     }
+  };
+
+  const handleEdit = () => {
+    //some logic
   };
 
   const handleShare = async (taskId) => {
     if (!taskId) {
-      // toast.error("Cannot copy link");
+      toast.error("Cannot copy link");
       return;
     }
     const path = `${frontendUrl}/task/${taskId}`;
+    setIsMenuOpen(false);
     try {
       await copy(path);
-      //toast here
-    } catch (error) {}
+      toast.success("Link copied");
+    } catch (error) {
+      toast.error(error.message || "Cannot copy link");
+    }
+  };
+
+  const handleDelete = () => {
+    setDeleteModal(true);
+    setIsMenuOpen(false);
   };
 
   const getStatusClass = () => {
@@ -58,29 +68,29 @@ function Card({ task }) {
 
   return (
     <div className={styles.container}>
+      <Toaster />
       <div className={styles.topSection}>
         <div className={styles.priorityWrapper}>
           <div
             className={styles.priorityBullet}
             style={{ backgroundColor: priorityColor(task.priority) }}
-          ></div>
+          />
           <p className={styles.priorityLabel}>{task.priority} PRIORITY</p>
         </div>
         <div className={styles.menucontainer}>
           <Menu className={styles.menuicon} onClick={toggleMenu} />
           {isMenuOpen && (
             <ul className={styles.menulist}>
-              <li className={styles.menuItem}>Edit</li>
+              <li className={styles.menuItem} onClick={handleEdit}>
+                Edit
+              </li>
               <li
                 className={styles.menuItem}
                 onClick={() => handleShare(task._id)}
               >
                 Share
               </li>
-              <li
-                className={styles.menuItemDel}
-                onClick={() => handleDelete(task._id)}
-              >
+              <li className={styles.menuItemDel} onClick={handleDelete}>
                 Delete
               </li>
             </ul>
@@ -129,6 +139,17 @@ function Card({ task }) {
           <div className={styles.statusBtn}>DONE</div>
         </div>
       </div>
+
+      {deleteModal && (
+        <DeleteModal
+          isOpen={deleteModal}
+          onClose={() => setDeleteModal(false)}
+          onConfirm={() => {
+            removeTask(task._id);
+            setDeleteModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }

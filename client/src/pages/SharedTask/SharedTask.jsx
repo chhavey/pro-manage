@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { fetchTask } from "../../apis/task";
 import styles from "./SharedTask.module.css";
 import { ReactComponent as Logo } from "../../assets/logo.svg";
+import { ReactComponent as Check } from "../../assets/check.svg";
 import { priorityColor } from "../../utils/formatUtils";
 import Spinner from "@atlaskit/spinner";
 import { formatDeadlineDate } from "../../utils/formatDate";
@@ -45,15 +46,22 @@ function SharedTask() {
             <p className={styles.checklistLabel}>
               Checklist ({completed}/{total})
             </p>
+
             <div className={styles.checklistWrapper}>
               {task.checklist.map((subtask, index) => (
-                <label key={index} className={styles.checkWrapper}>
-                  <input type="checkbox" checked={subtask.isDone} readOnly />
-                  <span className={styles.checkmark}></span>
+                <div key={index} className={styles.checkWrapper}>
+                  <div
+                    className={
+                      subtask.isDone ? styles.checkboxSelected : styles.checkbox
+                    }
+                  >
+                    {subtask.isDone && <Check />}
+                  </div>
                   {subtask.subtask}
-                </label>
+                </div>
               ))}
             </div>
+
             {task.deadline && (
               <div className={styles.dueDate}>
                 <p className={styles.dateLabel}> Due Date</p>

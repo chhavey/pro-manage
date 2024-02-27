@@ -38,13 +38,13 @@
 }
 
 /* Vertical scrollbar */
-::-webkit-scrollbar {
+.container::-webkit-scrollbar {
   width: 8px;
   border-radius: 10px;
   background-color: #d6eaf4;
 }
 
-::-webkit-scrollbar-thumb {
+.container::-webkit-scrollbar-thumb {
   background-color: #8daab9cc;
   border-radius: 10px;
 }

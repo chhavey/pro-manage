@@ -6,11 +6,13 @@ import { ReactComponent as BoardIcon } from "../../assets/board.svg";
 import { ReactComponent as AnalyticsIcon } from "../../assets/analytics.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/settings.svg";
 import { ReactComponent as LogoutIcon } from "../../assets/logout.svg";
+import LogoutModal from "../Modal/LogoutModal/LogoutModal";
 
 function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedTab, setSelectedTab] = useState("board");
+  const [logoutModal, setLogoutModal] = useState(false);
 
   useEffect(() => {
     const path = location.pathname.split("/")[1];
@@ -23,8 +25,7 @@ function Sidebar() {
   };
 
   const handleLogout = () => {
-    navigate("/");
-    localStorage.clear();
+    setLogoutModal(true);
   };
 
   return (
@@ -76,6 +77,18 @@ function Sidebar() {
       <div className={styles.logoutWrapper} onClick={handleLogout}>
         <LogoutIcon className={styles.logoutBtn} />
       </div>
+
+      {logoutModal && (
+        <LogoutModal
+          isOpen={logoutModal}
+          onClose={() => setLogoutModal(false)}
+          onConfirm={() => {
+            setLogoutModal(false);
+            navigate("/");
+            localStorage.clear();
+          }}
+        />
+      )}
     </div>
   );
 }
