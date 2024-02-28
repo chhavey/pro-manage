@@ -1,20 +1,29 @@
 import React, { useState, useEffect } from "react";
+import copy from "clipboard-copy";
 import styles from "./Card.module.css";
 import { ReactComponent as Menu } from "../../assets/menu.svg";
 import { ReactComponent as Check } from "../../assets/check.svg";
-import { priorityColor } from "../../utils/formatUtils";
-import { GoChevronDown, GoChevronUp } from "react-icons/go";
-import { formatDeadlineDate } from "../../utils/formatDate";
 import { updateSubtaskStatus } from "../../apis/task";
-import { frontendUrl } from "../../config/config";
-import copy from "clipboard-copy";
 import { toast, Toaster } from "react-hot-toast";
+import { frontendUrl } from "../../config/config";
+import { priorityColor } from "../../utils/formatUtils";
+import { formatDeadlineDate } from "../../utils/formatDate";
 import { errorStyle, successStyle } from "../../utils/toastStyle";
-
+import { GoChevronDown, GoChevronUp } from "react-icons/go";
+import CreateModal from "../Modal/CreateModal/CreateModal";
 import DeleteModal from "../Modal/DeleteModal/DeleteModal";
 
-function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
+function Card({
+  task,
+  status,
+  moveCard,
+  deleteCard,
+  editCard,
+  collapse,
+  resetCollapse,
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
@@ -66,7 +75,8 @@ function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
   };
 
   const handleEdit = () => {
-    //some logic
+    setEditModal(true);
+    setIsMenuOpen(false);
   };
 
   const handleShare = async (taskId) => {
@@ -217,6 +227,23 @@ function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
           onConfirm={() => {
             deleteCard(task._id);
             setDeleteModal(false);
+          }}
+        />
+      )}
+
+      {editModal && (
+        <CreateModal
+          isOpen={editModal}
+          onClose={() => setEditModal(false)}
+          onConfirm={(title, priority, checklist, deadline) => {
+            editCard(task._id, title, priority, checklist, deadline);
+            setEditModal(false);
+          }}
+          taskData={{
+            title: task.title,
+            priority: task.priority,
+            checklist: task.checklist,
+            deadline: task.deadline,
           }}
         />
       )}

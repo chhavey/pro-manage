@@ -1,17 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./CreateModal.module.css";
 import { ReactComponent as Add } from "../../../assets/addNew.svg";
 import { ReactComponent as Delete } from "../../../assets/delete.svg";
 import { ReactComponent as Check } from "../../../assets/check.svg";
+import { toast, Toaster } from "react-hot-toast";
+import { errorStyle } from "../../../utils/toastStyle";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function CreateModal({ isOpen, onClose, onConfirm }) {
+function CreateModal({ isOpen, onClose, onConfirm, taskData }) {
   const [checklistItems, setChecklistItems] = useState([]);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [priority, setPriority] = useState("");
   const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    if (taskData) {
+      setTitle(taskData.title);
+      setPriority(taskData.priority);
+      setSelectedDate(taskData.deadline ? new Date(taskData.deadline) : null);
+      setChecklistItems(taskData.checklist.map((subtask) => subtask.subtask));
+      setSelectedCheckboxes(
+        taskData.checklist.map((subtask) => subtask.isDone)
+      );
+    }
+  }, [taskData]);
 
   const handleAddChecklist = () => {
     setChecklistItems([...checklistItems, ""]);
@@ -48,6 +62,15 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
   }));
 
   const handleSave = () => {
+    if (
+      !title ||
+      !priority ||
+      checklist.length === 0 ||
+      checklistItems.some((item) => item.trim() === "")
+    ) {
+      toast.error("All fields marked with * are required", errorStyle);
+      return;
+    }
     onConfirm(title, priority, checklist, deadline);
     onClose();
   };
@@ -56,6 +79,7 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
 
   return (
     <div className={styles.overlay}>
+      <Toaster />
       <div className={styles.modal}>
         <div className={styles.label}>
           Title <span>*</span>
@@ -78,14 +102,7 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
               }`}
               onClick={() => setPriority("HIGH")}
             >
-              <div
-                style={{
-                  width: "8px",
-                  height: "8px",
-                  backgroundColor: "var(--priority-high)",
-                  borderRadius: "50%",
-                }}
-              />
+              <div className={styles.highPriority} />
               HIGH PRIORITY
             </div>
             <div
@@ -94,14 +111,7 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
               }`}
               onClick={() => setPriority("MODERATE")}
             >
-              <div
-                style={{
-                  width: "8px",
-                  height: "8px",
-                  backgroundColor: "var(--priority-moderate)",
-                  borderRadius: "50%",
-                }}
-              />
+              <div className={styles.moderatePriority} />
               MODERATE PRIORITY
             </div>
             <div
@@ -110,14 +120,7 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
               }`}
               onClick={() => setPriority("LOW")}
             >
-              <div
-                style={{
-                  width: "8px",
-                  height: "8px",
-                  backgroundColor: "var(--priority-low)",
-                  borderRadius: "50%",
-                }}
-              />
+              <div className={styles.lowPriority} />
               LOW PRIORITY
             </div>
           </div>

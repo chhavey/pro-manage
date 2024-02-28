@@ -56,6 +56,28 @@ const createTask = async (title, priority, checklist, deadline) => {
     }
 }
 
+const editTask = async (taskId, updatedTaskData) => {
+    try {
+        const reqUrl = `${backendUrl}/task/${taskId}`;
+        const response = await axios.put(reqUrl, updatedTaskData, {
+            headers: {
+                'Authorization': token,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else if (error.message === 'Internal Server Error') {
+            throw new Error('Unable to connect to the server. Please check your internet connection.');
+        } else {
+            throw new Error('Failed to update task. Please try again later.');
+        }
+    }
+};
+
+export default editTask;
+
 const deleteTask = async (taskId) => {
     try {
         const reqUrl = `${backendUrl}/task/${taskId}`;
@@ -171,4 +193,4 @@ const updateStatus = async (taskId, status) => {
     }
 };
 
-export { filterTasks, createTask, deleteTask, fetchTask, fetchAnalytics, updateSubtaskStatus, updateStatus };
+export { filterTasks, createTask, editTask, deleteTask, fetchTask, fetchAnalytics, updateSubtaskStatus, updateStatus };

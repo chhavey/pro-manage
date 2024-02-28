@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Board.module.css";
-import { formattedDate } from "../../utils/formatDate";
 import Column from "../Column/Column";
 import { GoChevronDown } from "react-icons/go";
+import { formattedDate } from "../../utils/formatDate";
+import { toast, Toaster } from "react-hot-toast";
+import { errorStyle, successStyle } from "../../utils/toastStyle";
 import {
   filterTasks,
   updateStatus,
   deleteTask,
   createTask,
+  editTask,
 } from "../../apis/task";
-import { toast, Toaster } from "react-hot-toast";
-import { errorStyle, successStyle } from "../../utils/toastStyle";
 
 function Board() {
   const options = [
@@ -27,12 +28,8 @@ function Board() {
     "In Progress": [],
     Done: [],
   });
-
   //to reload the board as soon as card status or task Id changes in card component
-  const [status, setStatus] = useState(null);
-  const [taskId, setTaskId] = useState(null);
-  const [deleteId, setDeleteId] = useState(null);
-  const [createUpdate, setCreateUpdate] = useState(null);
+  const [reload, setReload] = useState(false);
 
   const handleOptionClick = (option) => {
     setFilterType(option);
@@ -60,13 +57,12 @@ function Board() {
   useEffect(() => {
     filterTask();
     // eslint-disable-next-line
-  }, [filterType, status, taskId, deleteId, createUpdate]);
+  }, [filterType, reload]);
 
   const moveCard = async (taskId, newStatus) => {
     try {
       await updateStatus(taskId, newStatus);
-      setStatus(newStatus);
-      setTaskId(taskId);
+      setReload(!reload);
     } catch (error) {
       toast.error(error.message || "Something went wrong", errorStyle);
     }
@@ -76,7 +72,7 @@ function Board() {
     try {
       const response = await deleteTask(taskId);
       if (response) {
-        setDeleteId(taskId);
+        setReload(!reload);
         toast.success(response.message || "Task removed", successStyle);
       }
     } catch (error) {
@@ -87,8 +83,19 @@ function Board() {
   const createCard = async (title, priority, checklist, deadline) => {
     try {
       const response = await createTask(title, priority, checklist, deadline);
-      setCreateUpdate(response.data.id);
+      setReload(!reload);
       toast.success(response.message || "Task added", successStyle);
+    } catch (error) {
+      toast.error(error.message || "Something went wrong", errorStyle);
+    }
+  };
+
+  const editCard = async (taskId, title, priority, checklist, deadline) => {
+    const updatedTaskData = { title, priority, checklist, deadline };
+    try {
+      const response = await editTask(taskId, updatedTaskData);
+      setReload(!reload);
+      toast.success(response.message || "Task updated", successStyle);
     } catch (error) {
       toast.error(error.message || "Something went wrong", errorStyle);
     }
@@ -137,6 +144,7 @@ function Board() {
             moveCard={moveCard}
             deleteCard={deleteCard}
             createCard={createCard}
+            editCard={editCard}
           />
           <Column
             status="To Do"
@@ -144,6 +152,7 @@ function Board() {
             moveCard={moveCard}
             deleteCard={deleteCard}
             createCard={createCard}
+            editCard={editCard}
           />
           <Column
             status="In Progress"
@@ -151,6 +160,7 @@ function Board() {
             moveCard={moveCard}
             deleteCard={deleteCard}
             createCard={createCard}
+            editCard={editCard}
           />
           <Column
             status="Done"
@@ -158,6 +168,7 @@ function Board() {
             moveCard={moveCard}
             deleteCard={deleteCard}
             createCard={createCard}
+            editCard={editCard}
           />
         </div>
       </div>

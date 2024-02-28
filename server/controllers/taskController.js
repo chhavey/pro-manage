@@ -59,10 +59,8 @@ const updateTask = async (req, res) => {
         const taskId = req.params.taskId;
         const userId = req.body.userId;
 
-        // Find the existing task
         let existingTask = await Task.findOne({ _id: taskId, user: userId });
 
-        // Check if the task exists and user is authorized to edit
         if (!existingTask) {
             return handleResponse(res, 404, 'Task not found.');
         }
@@ -71,16 +69,13 @@ const updateTask = async (req, res) => {
             return handleResponse(res, 400, 'All fields marked with * are required.');
         }
 
-        // Update task fields
         existingTask.title = title || existingTask.title;
         existingTask.priority = priority || existingTask.priority;
         existingTask.checklist = checklist || existingTask.checklist;
         existingTask.deadline = deadline || existingTask.deadline;
 
-        // Save the updated task
         existingTask = await existingTask.save();
 
-        // handleResponse(res, 200, 'Task updated successfully', { id: existingTask._id });
         handleResponse(res, 200, 'Task updated', existingTask);
     }
     catch (error) {
@@ -164,9 +159,8 @@ const fetchAnalytics = async (req, res) => {
         const highPriorityTasks = await Task.countDocuments({ user: userId, priority: 'HIGH' });
 
         // Fetch tasks with due dates
-        const dueDateTasks = await Task.countDocuments({ user: userId, status: { $ne: 'Done' }, deadline: { $exists: true } });
+        const dueDateTasks = await Task.countDocuments({ user: userId, status: { $ne: 'Done' }, deadline: { $ne: null } });
 
-        // Construct response object
         const tasksByCategory = {
             backlogTasks,
             todoTasks,

@@ -1,16 +1,10 @@
 :root {
   --color-primary: #17a2b8;
   --board-bg: #eef2f5;
-
   --priority-low: #63c05b;
   --priority-moderate: #18b0ff;
   --priority-high: #ff2473;
-
   --color-red: #cf3636;
-  --sidebar-highlight: #edf5fe;
-  --scrollbar: #9cb7c5;
-  --scrollbar-bg: #d6eaf4;
-
   --button-bg: #eeecec;
   --button-text: #767575;
 }
@@ -38,10 +32,6 @@ body {
   overflow-x: hidden;
 }
 
-img,
-picture,
-video,
-canvas,
 svg {
   display: block;
   max-width: 100%;
@@ -62,23 +52,4 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
-}
-
-#root,
-#__next {
-  isolation: isolate;
-}
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
 }

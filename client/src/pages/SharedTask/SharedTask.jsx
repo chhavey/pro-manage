@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
+import styles from "./SharedTask.module.css";
 import { useParams } from "react-router-dom";
 import { fetchTask } from "../../apis/task";
-import styles from "./SharedTask.module.css";
 import { ReactComponent as Logo } from "../../assets/logo.svg";
 import { ReactComponent as Check } from "../../assets/check.svg";
 import { priorityColor } from "../../utils/formatUtils";
-import Spinner from "@atlaskit/spinner";
 import { formatDeadlineDate } from "../../utils/formatDate";
 import { toast, Toaster } from "react-hot-toast";
 import { errorStyle } from "../../utils/toastStyle";
+import Spinner from "@atlaskit/spinner";
 
 function SharedTask() {
   const [task, setTask] = useState(null);

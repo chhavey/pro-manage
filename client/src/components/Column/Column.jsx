@@ -1,11 +1,11 @@
 import React, { useState } from "react";
+import Card from "../Card/Card";
 import styles from "./Column.module.css";
+import CreateModal from "../Modal/CreateModal/CreateModal";
 import { ReactComponent as Minimize } from "../../assets/minimize.svg";
 import { ReactComponent as AddButton } from "../../assets/add.svg";
-import Card from "../Card/Card";
-import CreateModal from "../Modal/CreateModal/CreateModal";
 
-function Column({ status, tasks, moveCard, deleteCard, createCard }) {
+function Column({ status, tasks, moveCard, deleteCard, createCard, editCard }) {
   const [addTaskModal, setAddTaskModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -40,6 +40,7 @@ function Column({ status, tasks, moveCard, deleteCard, createCard }) {
             status={status}
             moveCard={moveCard}
             deleteCard={deleteCard}
+            editCard={editCard}
             collapse={isCollapsed}
             resetCollapse={resetCollapse}
           />

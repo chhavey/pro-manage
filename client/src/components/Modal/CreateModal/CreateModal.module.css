@@ -84,6 +84,26 @@
   border: none;
 }
 
+.highPriority {
+  width: 8px;
+  height: 8px;
+  background-color: var(--priority-high);
+  border-radius: 50%;
+}
+.moderatePriority {
+  width: 8px;
+  height: 8px;
+  background-color: var(--priority-moderate);
+  border-radius: 50%;
+}
+
+.lowPriority {
+  width: 8px;
+  height: 8px;
+  background-color: var(--priority-low);
+  border-radius: 50%;
+}
+
 .addTaskBtn {
   width: 40%;
   font-family: "Inter", sans-serif;
