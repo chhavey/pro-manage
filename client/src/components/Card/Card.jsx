@@ -9,6 +9,8 @@ import { updateSubtaskStatus } from "../../apis/task";
 import { frontendUrl } from "../../config/config";
 import copy from "clipboard-copy";
 import { toast, Toaster } from "react-hot-toast";
+import { errorStyle, successStyle } from "../../utils/toastStyle";
+
 import DeleteModal from "../Modal/DeleteModal/DeleteModal";
 
 function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
@@ -59,7 +61,7 @@ function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
         updatedSelectedCheckboxes[index]
       );
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong", errorStyle);
     }
   };
 
@@ -69,16 +71,16 @@ function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
 
   const handleShare = async (taskId) => {
     if (!taskId) {
-      toast.error("Cannot copy link");
+      toast.error("Cannot copy link", errorStyle);
       return;
     }
     const path = `${frontendUrl}/task/${taskId}`;
     setIsMenuOpen(false);
     try {
       await copy(path);
-      toast.success("Link copied");
+      toast.success("Link copied", successStyle);
     } catch (error) {
-      toast.error(error.message || "Cannot copy link");
+      toast.error(error.message || "Cannot copy link", errorStyle);
     }
   };
 

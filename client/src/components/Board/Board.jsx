@@ -10,6 +10,7 @@ import {
   createTask,
 } from "../../apis/task";
 import { toast, Toaster } from "react-hot-toast";
+import { errorStyle, successStyle } from "../../utils/toastStyle";
 
 function Board() {
   const options = [
@@ -52,7 +53,7 @@ function Board() {
       });
       setTasks(organizedTasks);
     } catch (error) {
-      toast.error(error.message || "Cannot fetch tasks");
+      toast.error(error.message || "Cannot fetch tasks", errorStyle);
     }
   };
 
@@ -67,7 +68,7 @@ function Board() {
       setStatus(newStatus);
       setTaskId(taskId);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong", errorStyle);
     }
   };
 
@@ -76,10 +77,10 @@ function Board() {
       const response = await deleteTask(taskId);
       if (response) {
         setDeleteId(taskId);
-        toast.success(response.message || "Task removed");
+        toast.success(response.message || "Task removed", successStyle);
       }
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong", errorStyle);
     }
   };
 
@@ -87,9 +88,9 @@ function Board() {
     try {
       const response = await createTask(title, priority, checklist, deadline);
       setCreateUpdate(response.data.id);
-      toast.success(response.message || "Task added");
+      toast.success(response.message || "Task added", successStyle);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong", errorStyle);
     }
   };
 

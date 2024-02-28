@@ -6,6 +6,7 @@ import { ReactComponent as Email } from "../../assets/email.svg";
 import { ReactComponent as Password } from "../../assets/password.svg";
 import { register } from "../../apis/auth";
 import { toast, Toaster } from "react-hot-toast";
+import { errorStyle } from "../../utils/toastStyle";
 import { useNavigate } from "react-router-dom";
 import Spinner from "@atlaskit/spinner";
 
@@ -81,7 +82,7 @@ function Register() {
         navigate("/");
       }
     } catch (error) {
-      toast.error(error.message || "Sign Up failed.", {
+      toast.error(error.message || "Sign Up failed.", errorStyle, {
         duration: 4000,
       });
     } finally {
@@ -112,7 +113,7 @@ function Register() {
         <div className={styles.inputWrapper}>
           <Email className={styles.icons} />
           <input
-            type="email"
+            type="text"
             placeholder="Email"
             value={email}
             name="email"

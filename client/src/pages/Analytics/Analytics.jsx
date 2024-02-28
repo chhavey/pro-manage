@@ -4,6 +4,7 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import { ReactComponent as Bullet } from "../../assets/bullet.svg";
 import { fetchAnalytics } from "../../apis/task";
 import { toast, Toaster } from "react-hot-toast";
+import { errorStyle } from "../../utils/toastStyle";
 import { formatNum } from "../../utils/formatUtils";
 import Spinner from "@atlaskit/spinner";
 
@@ -18,7 +19,7 @@ function Analytics() {
       setStats(response);
     } catch (error) {
       const errorMessage = error.message || "An error occurred";
-      toast.error(errorMessage);
+      toast.error(errorMessage, errorStyle);
     } finally {
       setLoading(false);
     }

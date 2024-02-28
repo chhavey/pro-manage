@@ -6,6 +6,7 @@ import { ReactComponent as Name } from "../../assets/name.svg";
 import { ReactComponent as Password } from "../../assets/password.svg";
 import { settings } from "../../apis/auth";
 import { toast, Toaster } from "react-hot-toast";
+import { errorStyle, successStyle } from "../../utils/toastStyle";
 import Spinner from "@atlaskit/spinner";
 
 function Settings() {
@@ -28,13 +29,13 @@ function Settings() {
     try {
       const response = await settings(name, oldPassword, newPassword);
       if (response) {
-        toast.success(response);
+        toast.success(response || "Details updated", successStyle);
         setName("");
         setOldPassword("");
         setNewPassword("");
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || "Something went wrong", errorStyle);
     } finally {
       setLoading(false);
     }

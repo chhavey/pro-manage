@@ -8,6 +8,11 @@ const createTask = async (req, res) => {
     try {
         const { title, priority, checklist, deadline } = req.body;
         const userId = req.body.userId;
+
+        if (!title || !priority || !checklist) {
+            return handleResponse(res, 400, 'All fields marked with * are required.');
+        }
+
         const newTask = new Task({
             title,
             priority,
@@ -18,7 +23,7 @@ const createTask = async (req, res) => {
 
         await newTask.save();
 
-        handleResponse(res, 201, 'Task created successfully', { id: newTask._id });
+        handleResponse(res, 201, 'Task added', { id: newTask._id });
     }
     catch (error) {
         errorHandler(res, error);
@@ -50,7 +55,7 @@ const fetchTask = async (req, res) => {
 //Update task
 const updateTask = async (req, res) => {
     try {
-        const { title, priority, checklist, deadline, status } = req.body;
+        const { title, priority, checklist, deadline } = req.body;
         const taskId = req.params.taskId;
         const userId = req.body.userId;
 
@@ -62,18 +67,21 @@ const updateTask = async (req, res) => {
             return handleResponse(res, 404, 'Task not found.');
         }
 
+        if (!title || !priority || !checklist) {
+            return handleResponse(res, 400, 'All fields marked with * are required.');
+        }
+
         // Update task fields
         existingTask.title = title || existingTask.title;
         existingTask.priority = priority || existingTask.priority;
         existingTask.checklist = checklist || existingTask.checklist;
         existingTask.deadline = deadline || existingTask.deadline;
-        existingTask.status = status || existingTask.status;
 
         // Save the updated task
         existingTask = await existingTask.save();
 
         // handleResponse(res, 200, 'Task updated successfully', { id: existingTask._id });
-        handleResponse(res, 200, 'Task updated successfully', existingTask);
+        handleResponse(res, 200, 'Task updated', existingTask);
     }
     catch (error) {
         errorHandler(res, error);
@@ -85,7 +93,7 @@ const deleteTask = async (req, res) => {
     try {
         const taskId = req.params.taskId;
         await Task.findByIdAndDelete(taskId);
-        handleResponse(res, 200, 'Task deleted successfully');
+        handleResponse(res, 200, 'Task deleted');
     } catch (error) {
         errorHandler(res, error);
     }
@@ -204,7 +212,7 @@ const updateSubtaskStatus = async (req, res) => {
         }
 
         if (subtaskIndex < 0 || subtaskIndex >= task.checklist.length) {
-            return handleResponse(res, 400, 'Invalid subtask index.');
+            return handleResponse(res, 400, 'Invalid subtask');
         }
 
         task.checklist[subtaskIndex].isDone = isDone;

@@ -8,6 +8,7 @@ import { priorityColor } from "../../utils/formatUtils";
 import Spinner from "@atlaskit/spinner";
 import { formatDeadlineDate } from "../../utils/formatDate";
 import { toast, Toaster } from "react-hot-toast";
+import { errorStyle } from "../../utils/toastStyle";
 
 function SharedTask() {
   const [task, setTask] = useState(null);
@@ -22,7 +23,7 @@ function SharedTask() {
       setCompleted(response.data.data.completedSubtasks);
       setTotal(response.data.data.totalSubtasks);
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toast.error(error.message || "Something went wrong", errorStyle);
     }
   };
 

@@ -9,12 +9,12 @@ const register = async (req, res) => {
         const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
-            return handleResponse(res, 400, 'All fields are required.');
+            return handleResponse(res, 400, 'All fields are required');
         }
 
         const userExists = await User.findOne({ email });
         if (userExists) {
-            return handleResponse(res, 409, 'User with this email already exists.');
+            return handleResponse(res, 409, 'User with this email already exists');
         }
 
         const encodedPassword = await bcrypt.hash(password, 10)
@@ -22,7 +22,7 @@ const register = async (req, res) => {
         const newUser = new User({ name, email, password: encodedPassword });
         await newUser.save();
 
-        return handleResponse(res, 201, 'User registered successfully.', { loggedUser: name });
+        return handleResponse(res, 201, 'User registered', { loggedUser: name });
     } catch (error) {
         errorHandler(res, error);
     }
@@ -33,17 +33,17 @@ const login = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return handleResponse(res, 400, 'Email and password are required.');
+            return handleResponse(res, 400, 'Email and password are required');
         }
 
         const user = await User.findOne({ email });
         if (!user) {
-            return handleResponse(res, 401, 'Invalid credentials.');
+            return handleResponse(res, 401, 'Invalid credentials');
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password)
         if (!isPasswordMatch) {
-            return handleResponse(res, 401, 'Invalid credentials.');
+            return handleResponse(res, 401, 'Invalid credentials');
         }
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
@@ -61,12 +61,12 @@ const settings = async (req, res) => {
         const userId = req.body.userId;
 
         if (!oldPassword || !newPassword) {
-            return handleResponse(res, 400, 'Password fields are required.');
+            return handleResponse(res, 400, 'Password fields are required');
         }
 
         const user = await User.findOne({ _id: userId });
         if (!user) {
-            return handleResponse(res, 404, 'User not found.');
+            return handleResponse(res, 404, 'User not found');
         }
 
         user.name = name || user.name;
@@ -74,13 +74,13 @@ const settings = async (req, res) => {
         // Compare the old password
         const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isPasswordMatch) {
-            return handleResponse(res, 401, 'Incorrect old password.');
+            return handleResponse(res, 401, 'Incorrect old password');
         }
 
         // Check if the old password and new password are the same
         const isSamePassword = await bcrypt.compare(newPassword, user.password);
         if (isSamePassword) {
-            return handleResponse(res, 400, 'New password must be different from old password.');
+            return handleResponse(res, 400, 'New password must be different from old password');
         }
 
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
@@ -88,7 +88,7 @@ const settings = async (req, res) => {
         user.password = hashedNewPassword;
         await user.save();
 
-        return handleResponse(res, 200, 'Details updated successfully.');
+        return handleResponse(res, 200, 'Details updated');
     } catch (error) {
         errorHandler(res, error);
     }
