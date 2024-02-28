@@ -7,6 +7,7 @@ import { ReactComponent as Check } from "../../assets/check.svg";
 import { priorityColor } from "../../utils/formatUtils";
 import Spinner from "@atlaskit/spinner";
 import { formatDeadlineDate } from "../../utils/formatDate";
+import { toast, Toaster } from "react-hot-toast";
 
 function SharedTask() {
   const [task, setTask] = useState(null);
@@ -15,10 +16,14 @@ function SharedTask() {
   const { taskId } = useParams();
 
   const sharedTask = async () => {
-    const response = await fetchTask(taskId);
-    setTask(response.data.data.task);
-    setCompleted(response.data.data.completedSubtasks);
-    setTotal(response.data.data.totalSubtasks);
+    try {
+      const response = await fetchTask(taskId);
+      setTask(response.data.data.task);
+      setCompleted(response.data.data.completedSubtasks);
+      setTotal(response.data.data.totalSubtasks);
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    }
   };
 
   useEffect(() => {
@@ -28,6 +33,7 @@ function SharedTask() {
 
   return (
     <div className={styles.container}>
+      <Toaster />
       <div className={styles.header}>
         <Logo />
         Pro Manage

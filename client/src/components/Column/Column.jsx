@@ -5,11 +5,20 @@ import { ReactComponent as AddButton } from "../../assets/add.svg";
 import Card from "../Card/Card";
 import CreateModal from "../Modal/CreateModal/CreateModal";
 
-function Column({ status, tasks, moveCard, deleteCard }) {
+function Column({ status, tasks, moveCard, deleteCard, createCard }) {
   const [addTaskModal, setAddTaskModal] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleAddTask = () => {
     setAddTaskModal(true);
+  };
+
+  const minimize = () => {
+    setIsCollapsed(true);
+  };
+
+  const resetCollapse = () => {
+    setIsCollapsed(false);
   };
 
   return (
@@ -20,7 +29,7 @@ function Column({ status, tasks, moveCard, deleteCard }) {
           {status === "To Do" && (
             <AddButton className={styles.buttons} onClick={handleAddTask} />
           )}
-          <Minimize className={styles.buttons} />
+          <Minimize className={styles.buttons} onClick={minimize} />
         </div>
       </div>
       <div className={styles.cardsWrapper}>
@@ -31,6 +40,8 @@ function Column({ status, tasks, moveCard, deleteCard }) {
             status={status}
             moveCard={moveCard}
             deleteCard={deleteCard}
+            collapse={isCollapsed}
+            resetCollapse={resetCollapse}
           />
         ))}
       </div>
@@ -38,6 +49,7 @@ function Column({ status, tasks, moveCard, deleteCard }) {
         <CreateModal
           isOpen={addTaskModal}
           onClose={() => setAddTaskModal(false)}
+          onConfirm={createCard}
         />
       )}
     </div>

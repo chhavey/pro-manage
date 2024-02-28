@@ -3,7 +3,12 @@ import styles from "./Board.module.css";
 import { formattedDate } from "../../utils/formatDate";
 import Column from "../Column/Column";
 import { GoChevronDown } from "react-icons/go";
-import { filterTasks, updateStatus, deleteTask } from "../../apis/task";
+import {
+  filterTasks,
+  updateStatus,
+  deleteTask,
+  createTask,
+} from "../../apis/task";
 import { toast, Toaster } from "react-hot-toast";
 
 function Board() {
@@ -26,6 +31,7 @@ function Board() {
   const [status, setStatus] = useState(null);
   const [taskId, setTaskId] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
+  const [createUpdate, setCreateUpdate] = useState(null);
 
   const handleOptionClick = (option) => {
     setFilterType(option);
@@ -53,27 +59,37 @@ function Board() {
   useEffect(() => {
     filterTask();
     // eslint-disable-next-line
-  }, [filterType, status, taskId, deleteId]);
+  }, [filterType, status, taskId, deleteId, createUpdate]);
 
   const moveCard = async (taskId, newStatus) => {
     try {
       await updateStatus(taskId, newStatus);
       setStatus(newStatus);
       setTaskId(taskId);
-      console.log("Task status updated successfully");
     } catch (error) {
-      console.error("Error updating Task status:", error.message);
+      toast.error(error.message || "Something went wrong");
     }
   };
 
   const deleteCard = async (taskId) => {
     try {
       const response = await deleteTask(taskId);
-      console.log(response);
-      setDeleteId(taskId);
-      toast.success(response.message);
+      if (response) {
+        setDeleteId(taskId);
+        toast.success(response.message || "Task removed");
+      }
     } catch (error) {
-      toast.error(error.message || "Failed to delete task");
+      toast.error(error.message || "Something went wrong");
+    }
+  };
+
+  const createCard = async (title, priority, checklist, deadline) => {
+    try {
+      const response = await createTask(title, priority, checklist, deadline);
+      setCreateUpdate(response.data.id);
+      toast.success(response.message || "Task added");
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
     }
   };
 
@@ -119,24 +135,28 @@ function Board() {
             tasks={tasks.Backlog}
             moveCard={moveCard}
             deleteCard={deleteCard}
+            createCard={createCard}
           />
           <Column
             status="To Do"
             tasks={tasks["To Do"]}
             moveCard={moveCard}
             deleteCard={deleteCard}
+            createCard={createCard}
           />
           <Column
             status="In Progress"
             tasks={tasks["In Progress"]}
             moveCard={moveCard}
             deleteCard={deleteCard}
+            createCard={createCard}
           />
           <Column
             status="Done"
             tasks={tasks.Done}
             moveCard={moveCard}
             deleteCard={deleteCard}
+            createCard={createCard}
           />
         </div>
       </div>

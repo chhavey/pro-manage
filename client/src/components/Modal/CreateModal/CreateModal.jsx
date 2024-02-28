@@ -3,10 +3,15 @@ import styles from "./CreateModal.module.css";
 import { ReactComponent as Add } from "../../../assets/addNew.svg";
 import { ReactComponent as Delete } from "../../../assets/delete.svg";
 import { ReactComponent as Check } from "../../../assets/check.svg";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function CreateModal({ isOpen, onClose, onConfirm }) {
   const [checklistItems, setChecklistItems] = useState([]);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [priority, setPriority] = useState("");
+  const [title, setTitle] = useState("");
 
   const handleAddChecklist = () => {
     setChecklistItems([...checklistItems, ""]);
@@ -26,13 +31,26 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
     const updatedSelectedCheckboxes = [...selectedCheckboxes];
     updatedSelectedCheckboxes[index] = !updatedSelectedCheckboxes[index];
     setSelectedCheckboxes(updatedSelectedCheckboxes);
-
-    console.log("Selected checkbox index:", index);
   };
 
   const totalSelected = selectedCheckboxes.filter(
     (isSelected) => isSelected
   ).length;
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+  };
+
+  const deadline = selectedDate ? selectedDate.toISOString() : null;
+  const checklist = checklistItems.map((item, index) => ({
+    subtask: item,
+    isDone: selectedCheckboxes[index] || false,
+  }));
+
+  const handleSave = () => {
+    onConfirm(title, priority, checklist, deadline);
+    onClose();
+  };
 
   if (!isOpen) return null;
 
@@ -46,13 +64,20 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
           type="text"
           placeholder="Enter Task Title"
           className={styles.title}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <div className={styles.priorityContainer}>
           <div className={styles.label}>
             Select Priority <span>*</span>
           </div>
           <div className={styles.priorityWrapper}>
-            <div className={styles.priority}>
+            <div
+              className={`${styles.priority} ${
+                priority === "HIGH" ? styles.selected : ""
+              }`}
+              onClick={() => setPriority("HIGH")}
+            >
               <div
                 style={{
                   width: "8px",
@@ -63,7 +88,12 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
               />
               HIGH PRIORITY
             </div>
-            <div className={styles.priority}>
+            <div
+              className={`${styles.priority} ${
+                priority === "MODERATE" ? styles.selected : ""
+              }`}
+              onClick={() => setPriority("MODERATE")}
+            >
               <div
                 style={{
                   width: "8px",
@@ -74,7 +104,12 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
               />
               MODERATE PRIORITY
             </div>
-            <div className={styles.priority}>
+            <div
+              className={`${styles.priority} ${
+                priority === "LOW" ? styles.selected : ""
+              }`}
+              onClick={() => setPriority("LOW")}
+            >
               <div
                 style={{
                   width: "8px",
@@ -131,16 +166,21 @@ function CreateModal({ isOpen, onClose, onConfirm }) {
         </div>
 
         <div className={styles.buttonWrapper}>
-          <div className={styles.dateBtn}>Select Due Date</div>
-          {/* <label className={styles.dateBtn}>
-          <input type="date" />
-          Select Due Date
-          </label> */}
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            placeholderText="Select Due Date"
+            dateFormat="dd/MM/yyyy"
+            className={styles.dateBtn}
+          />
+
           <div className={styles.buttons}>
             <div className={styles.cancelBtn} onClick={onClose}>
               Cancel
             </div>
-            <div className={styles.createBtn}>Save</div>
+            <div className={styles.createBtn} onClick={handleSave}>
+              Save
+            </div>
           </div>
         </div>
       </div>

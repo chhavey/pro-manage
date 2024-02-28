@@ -68,13 +68,17 @@ const settings = async (name, oldPassword, newPassword) => {
             }
         });
 
+        if (response.status === 200) {
+            localStorage.setItem("loggedInUser", name);
+        }
+
         return response.data.message;
     }
     catch (error) {
         if (error.response && error.response.data) {
             throw new Error(error.response.data.message);
         } else {
-            throw new Error('Update failed!');
+            throw new Error('Unable to update credentials');
         }
     }
 

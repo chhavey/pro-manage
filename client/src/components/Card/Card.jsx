@@ -11,7 +11,7 @@ import copy from "clipboard-copy";
 import { toast, Toaster } from "react-hot-toast";
 import DeleteModal from "../Modal/DeleteModal/DeleteModal";
 
-function Card({ task, status, moveCard, deleteCard }) {
+function Card({ task, status, moveCard, deleteCard, collapse, resetCollapse }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
@@ -23,9 +23,18 @@ function Card({ task, status, moveCard, deleteCard }) {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
   const toggleChecklist = () => {
     setIsChecklistOpen(!isChecklistOpen);
   };
+
+  useEffect(() => {
+    if (collapse) {
+      setIsChecklistOpen(false);
+      resetCollapse();
+    }
+    // eslint-disable-next-line
+  }, [collapse]);
 
   useEffect(() => {
     setSelectedCheckboxes(task.checklist.map((subtask) => subtask.isDone));
@@ -49,9 +58,8 @@ function Card({ task, status, moveCard, deleteCard }) {
         index,
         updatedSelectedCheckboxes[index]
       );
-      console.log("Subtask status updated successfully");
     } catch (error) {
-      console.error("Error updating subtask status:", error.message);
+      toast.error(error.message || "Something went wrong");
     }
   };
 

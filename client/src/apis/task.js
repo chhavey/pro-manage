@@ -32,6 +32,30 @@ const filterTasks = async (filterType) => {
     }
 }
 
+const createTask = async (title, priority, checklist, deadline) => {
+    try {
+        const reqUrl = `${backendUrl}/task/create`;
+        const response = await axios.post(reqUrl, {
+            userId, title, priority, checklist, deadline
+        },
+            {
+                headers: {
+                    'Authorization': token,
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else if (error.message === 'Internal Server Error') {
+            throw new Error('Unable to connect to the server. Please check your internet connection.');
+        } else {
+            throw new Error('Cannot fetch tasks. Please try again later.');
+        }
+    }
+}
+
 const deleteTask = async (taskId) => {
     try {
         const reqUrl = `${backendUrl}/task/${taskId}`;
@@ -45,7 +69,13 @@ const deleteTask = async (taskId) => {
         });
         return response.data;
     } catch (error) {
-        console.log('lol no');
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else if (error.message === 'Internal Server Error') {
+            throw new Error('Unable to connect to the server. Please check your internet connection.');
+        } else {
+            throw new Error("Couldn't delete task. Please try again later.");
+        }
     }
 }
 
@@ -55,9 +85,16 @@ const fetchTask = async (taskId) => {
         const response = axios.get(reqUrl, {
             params: { taskId }
         });
+
         return response;
     } catch (error) {
-        console.log('Couldnt fetch task');
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else if (error.message === 'Internal Server Error') {
+            throw new Error('Unable to connect to the server. Please check your internet connection.');
+        } else {
+            throw new Error('Cannot fetch task. Please try again later.');
+        }
     }
 }
 
@@ -101,7 +138,13 @@ const updateSubtaskStatus = async (taskId, subtaskIndex, isDone) => {
         });
         return response.data;
     } catch (error) {
-        throw new Error('Failed to update subtask status');
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else if (error.message === 'Internal Server Error') {
+            throw new Error('Unable to connect to the server. Please check your internet connection.');
+        } else {
+            throw new Error('Failed to update subtask status');
+        }
     }
 };
 
@@ -118,8 +161,14 @@ const updateStatus = async (taskId, status) => {
         });
         return response.data;
     } catch (error) {
-        throw new Error('Failed to update task status');
+        if (error.response && error.response.data) {
+            throw new Error(error.response.data.message);
+        } else if (error.message === 'Internal Server Error') {
+            throw new Error('Unable to connect to the server. Please check your internet connection.');
+        } else {
+            throw new Error('Failed to update task status');
+        }
     }
 };
 
-export { filterTasks, deleteTask, fetchTask, fetchAnalytics, updateSubtaskStatus, updateStatus };
+export { filterTasks, createTask, deleteTask, fetchTask, fetchAnalytics, updateSubtaskStatus, updateStatus };
