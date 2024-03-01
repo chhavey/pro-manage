@@ -60,6 +60,24 @@ function Board() {
   }, [filterType, reload]);
 
   const moveCard = async (taskId, newStatus) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = { ...prevTasks };
+      let movedTask;
+
+      // Find the task to be moved and remove it from its current status
+      for (const [status, taskList] of Object.entries(updatedTasks)) {
+        const index = taskList.findIndex((task) => task._id === taskId);
+        if (index !== -1) {
+          movedTask = taskList.splice(index, 1)[0];
+          break;
+        }
+      }
+
+      // Add the moved task to the new status
+      updatedTasks[newStatus].push(movedTask);
+      return updatedTasks;
+    });
+
     try {
       await updateStatus(taskId, newStatus);
       setReload(!reload);

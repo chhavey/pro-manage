@@ -175,6 +175,7 @@ function CreateModal({ isOpen, onClose, onConfirm, taskData }) {
             placeholderText="Select Due Date"
             dateFormat="dd/MM/yyyy"
             className={styles.dateBtn}
+            popperClassName={styles.custom}
           />
 
           <div className={styles.buttons}>

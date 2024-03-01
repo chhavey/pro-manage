@@ -219,3 +219,14 @@
   font-weight: 400;
   line-height: 19px;
 }
+.buttonWrapper .custom {
+  margin-left: 12.75%;
+  min-height: 55%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom svg {
+  display: none;
+}
