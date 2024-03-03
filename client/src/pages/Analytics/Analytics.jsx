@@ -15,7 +15,8 @@ function Analytics() {
   const getAnalytics = async () => {
     setLoading(true);
     try {
-      const response = await fetchAnalytics();
+      const token = localStorage.getItem("token");
+      const response = await fetchAnalytics(token);
       setStats(response);
     } catch (error) {
       const errorMessage = error.message || "An error occurred";

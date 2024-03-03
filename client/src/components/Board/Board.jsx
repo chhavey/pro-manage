@@ -38,7 +38,8 @@ function Board() {
 
   const filterTask = async () => {
     try {
-      const response = await filterTasks(filterType.label);
+      const token = localStorage.getItem("token");
+      const response = await filterTasks(token, filterType.label);
       const organizedTasks = {
         Backlog: [],
         "To Do": [],
@@ -79,7 +80,8 @@ function Board() {
     });
 
     try {
-      await updateStatus(taskId, newStatus);
+      const token = localStorage.getItem("token");
+      await updateStatus(token, taskId, newStatus);
       setReload(!reload);
     } catch (error) {
       toast.error(error.message || "Something went wrong", errorStyle);
@@ -88,7 +90,8 @@ function Board() {
 
   const deleteCard = async (taskId) => {
     try {
-      const response = await deleteTask(taskId);
+      const token = localStorage.getItem("token");
+      const response = await deleteTask(token, taskId);
       if (response) {
         setReload(!reload);
         toast.success(response.message || "Task removed", successStyle);
@@ -100,7 +103,14 @@ function Board() {
 
   const createCard = async (title, priority, checklist, deadline) => {
     try {
-      const response = await createTask(title, priority, checklist, deadline);
+      const token = localStorage.getItem("token");
+      const response = await createTask(
+        token,
+        title,
+        priority,
+        checklist,
+        deadline
+      );
       setReload(!reload);
       toast.success(response.message || "Task added", successStyle);
     } catch (error) {
@@ -111,7 +121,8 @@ function Board() {
   const editCard = async (taskId, title, priority, checklist, deadline) => {
     const updatedTaskData = { title, priority, checklist, deadline };
     try {
-      const response = await editTask(taskId, updatedTaskData);
+      const token = localStorage.getItem("token");
+      const response = await editTask(token, taskId, updatedTaskData);
       setReload(!reload);
       toast.success(response.message || "Task updated", successStyle);
     } catch (error) {

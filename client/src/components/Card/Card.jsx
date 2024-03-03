@@ -64,7 +64,9 @@ function Card({
     setSelectedCheckboxes(updatedSelectedCheckboxes);
 
     try {
+      const token = localStorage.getItem("token");
       await updateSubtaskStatus(
+        token,
         task._id,
         index,
         updatedSelectedCheckboxes[index]

@@ -1,9 +1,8 @@
 import axios from 'axios';
 import { backendUrl } from '../config/config';
-const token = localStorage.getItem("token");
 const userId = localStorage.getItem("userId");
 
-const filterTasks = async (filterType) => {
+const filterTasks = async (token, filterType) => {
     try {
 
         const reqUrl = `${backendUrl}/task/filter`;
@@ -32,7 +31,7 @@ const filterTasks = async (filterType) => {
     }
 }
 
-const createTask = async (title, priority, checklist, deadline) => {
+const createTask = async (token, title, priority, checklist, deadline) => {
     try {
         const reqUrl = `${backendUrl}/task/create`;
         const response = await axios.post(reqUrl, {
@@ -56,7 +55,7 @@ const createTask = async (title, priority, checklist, deadline) => {
     }
 }
 
-const editTask = async (taskId, updatedTaskData) => {
+const editTask = async (token, taskId, updatedTaskData) => {
     try {
         const reqUrl = `${backendUrl}/task/${taskId}`;
         const response = await axios.put(reqUrl, updatedTaskData, {
@@ -76,9 +75,7 @@ const editTask = async (taskId, updatedTaskData) => {
     }
 };
 
-export default editTask;
-
-const deleteTask = async (taskId) => {
+const deleteTask = async (token, taskId) => {
     try {
         const reqUrl = `${backendUrl}/task/${taskId}`;
         const response = await axios.delete(reqUrl, {
@@ -120,7 +117,7 @@ const fetchTask = async (taskId) => {
     }
 }
 
-const fetchAnalytics = async () => {
+const fetchAnalytics = async (token) => {
     try {
         const reqUrl = `${backendUrl}/task/analytics`;
         const response = await axios.get(reqUrl,
@@ -146,7 +143,7 @@ const fetchAnalytics = async () => {
     }
 }
 
-const updateSubtaskStatus = async (taskId, subtaskIndex, isDone) => {
+const updateSubtaskStatus = async (token, taskId, subtaskIndex, isDone) => {
     try {
         const reqUrl = `${backendUrl}/task/subtask`;
         const response = await axios.post(reqUrl, {
@@ -170,7 +167,7 @@ const updateSubtaskStatus = async (taskId, subtaskIndex, isDone) => {
     }
 };
 
-const updateStatus = async (taskId, status) => {
+const updateStatus = async (token, taskId, status) => {
     try {
         const reqUrl = `${backendUrl}/task/taskStatus`;
         const response = await axios.post(reqUrl, {
