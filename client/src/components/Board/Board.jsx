@@ -5,6 +5,7 @@ import { GoChevronDown } from "react-icons/go";
 import { formattedDate } from "../../utils/formatDate";
 import { toast, Toaster } from "react-hot-toast";
 import { errorStyle, successStyle } from "../../utils/toastStyle";
+import Spinner from "@atlaskit/spinner";
 import {
   filterTasks,
   updateStatus,
@@ -21,6 +22,7 @@ function Board() {
     { label: "This Month", value: "This Month" },
   ];
   const name = localStorage.getItem("loggedInUser").split(" ");
+  const [loading, setLoading] = useState(false);
   const [filterType, setFilterType] = useState(options[1]);
   const [isOpen, setIsOpen] = useState(false);
   const [tasks, setTasks] = useState({
@@ -62,12 +64,15 @@ function Board() {
   }, [filterType, reload]);
 
   const moveCard = async (taskId, newStatus) => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       await updateStatus(token, taskId, newStatus);
       setReload(!reload);
     } catch (error) {
       toast.error(error.message || "Something went wrong", errorStyle);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -159,6 +164,11 @@ function Board() {
       </div>
 
       <div className={styles.boardWrapper}>
+        {loading && (
+          <div className={styles.loading}>
+            <Spinner size={40} />
+          </div>
+        )}
         <div className={styles.board}>
           <Column
             status="Backlog"
