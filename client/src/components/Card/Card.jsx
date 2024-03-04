@@ -3,7 +3,6 @@ import copy from "clipboard-copy";
 import styles from "./Card.module.css";
 import { ReactComponent as Menu } from "../../assets/menu.svg";
 import { ReactComponent as Check } from "../../assets/check.svg";
-import { updateSubtaskStatus } from "../../apis/task";
 import { toast, Toaster } from "react-hot-toast";
 import { frontendUrl } from "../../config/config";
 import { priorityColor } from "../../utils/formatUtils";
@@ -19,6 +18,7 @@ function Card({
   moveCard,
   deleteCard,
   editCard,
+  updateSubtask,
   collapse,
   resetCollapse,
 }) {
@@ -63,17 +63,7 @@ function Card({
     updatedSelectedCheckboxes[index] = !updatedSelectedCheckboxes[index];
     setSelectedCheckboxes(updatedSelectedCheckboxes);
 
-    try {
-      const token = localStorage.getItem("token");
-      await updateSubtaskStatus(
-        token,
-        task._id,
-        index,
-        updatedSelectedCheckboxes[index]
-      );
-    } catch (error) {
-      toast.error(error.message || "Something went wrong", errorStyle);
-    }
+    updateSubtask(task._id, index, updatedSelectedCheckboxes[index]);
   };
 
   const handleEdit = () => {

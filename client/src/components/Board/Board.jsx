@@ -11,6 +11,7 @@ import {
   deleteTask,
   createTask,
   editTask,
+  updateSubtaskStatus,
 } from "../../apis/task";
 
 function Board() {
@@ -61,24 +62,6 @@ function Board() {
   }, [filterType, reload]);
 
   const moveCard = async (taskId, newStatus) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = { ...prevTasks };
-      let movedTask;
-
-      // Find the task to be moved and remove it from its current status
-      for (const [status, taskList] of Object.entries(updatedTasks)) {
-        const index = taskList.findIndex((task) => task._id === taskId);
-        if (index !== -1) {
-          movedTask = taskList.splice(index, 1)[0];
-          break;
-        }
-      }
-
-      // Add the moved task to the new status
-      updatedTasks[newStatus].push(movedTask);
-      return updatedTasks;
-    });
-
     try {
       const token = localStorage.getItem("token");
       await updateStatus(token, taskId, newStatus);
@@ -130,6 +113,16 @@ function Board() {
     }
   };
 
+  const updateSubtask = async (taskId, index, update) => {
+    try {
+      const token = localStorage.getItem("token");
+      await updateSubtaskStatus(token, taskId, index, update);
+      setReload(!reload);
+    } catch (error) {
+      toast.error(error.message || "Something went wrong", errorStyle);
+    }
+  };
+
   return (
     <div className={styles.container}>
       <Toaster />
@@ -174,6 +167,7 @@ function Board() {
             deleteCard={deleteCard}
             createCard={createCard}
             editCard={editCard}
+            updateSubtask={updateSubtask}
           />
           <Column
             status="To Do"
@@ -182,6 +176,7 @@ function Board() {
             deleteCard={deleteCard}
             createCard={createCard}
             editCard={editCard}
+            updateSubtask={updateSubtask}
           />
           <Column
             status="In Progress"
@@ -190,6 +185,7 @@ function Board() {
             deleteCard={deleteCard}
             createCard={createCard}
             editCard={editCard}
+            updateSubtask={updateSubtask}
           />
           <Column
             status="Done"
@@ -198,6 +194,7 @@ function Board() {
             deleteCard={deleteCard}
             createCard={createCard}
             editCard={editCard}
+            updateSubtask={updateSubtask}
           />
         </div>
       </div>

@@ -5,7 +5,15 @@ import CreateModal from "../Modal/CreateModal/CreateModal";
 import { ReactComponent as Minimize } from "../../assets/minimize.svg";
 import { ReactComponent as AddButton } from "../../assets/add.svg";
 
-function Column({ status, tasks, moveCard, deleteCard, createCard, editCard }) {
+function Column({
+  status,
+  tasks,
+  moveCard,
+  deleteCard,
+  createCard,
+  editCard,
+  updateSubtask,
+}) {
   const [addTaskModal, setAddTaskModal] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -41,6 +49,7 @@ function Column({ status, tasks, moveCard, deleteCard, createCard, editCard }) {
             moveCard={moveCard}
             deleteCard={deleteCard}
             editCard={editCard}
+            updateSubtask={updateSubtask}
             collapse={isCollapsed}
             resetCollapse={resetCollapse}
           />
