@@ -21,7 +21,6 @@ function App() {
         <Route path="/task/:taskId" element={<SharedTask />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/" element={<LoginPage />} />
-        <Route path="*" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   );
