@@ -122,7 +122,6 @@ function Board() {
     try {
       const token = localStorage.getItem("token");
       await updateSubtaskStatus(token, taskId, index, update);
-      setReload(!reload);
     } catch (error) {
       toast.error(error.message || "Something went wrong", errorStyle);
     }

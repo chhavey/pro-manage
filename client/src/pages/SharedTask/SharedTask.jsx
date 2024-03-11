@@ -23,7 +23,7 @@ function SharedTask() {
       setCompleted(response.data.data.completedSubtasks);
       setTotal(response.data.data.totalSubtasks);
     } catch (error) {
-      toast.error(error.message || "Something went wrong", errorStyle);
+      toast.error("Something went wrong", errorStyle);
     }
   };
 
